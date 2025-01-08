@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="15dp"
+    android:layout_margin="10dp"
+    android:elevation="8dp"
+    android:translationZ="8dp"
+    android:background="@drawable/category">
+
+    <TextView
+        android:id="@+id/cropTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Crop"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/dateTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="Date"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+         />
+</LinearLayout>

@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "619115905836",
+    "firebase_url": "https://ligtastanim-459e8-default-rtdb.firebaseio.com",
+    "project_id": "ligtastanim-459e8",
+    "storage_bucket": "ligtastanim-459e8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:619115905836:android:67d5f27bde268b707a6289",
+        "android_client_info": {
+          "package_name": "com.example.ligtastanim"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHg4uOsBm1SAnMpmTQVTMEku78I7r8yGg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Main app strings -->
+    <string name="app_name">LigtasTanim</string>
+    <string name="home">Tahanan</string>
+    <string name="profile">Profile</string>
+    <string name="consult_da">Kumonsulta sa DA</string>
+    <string name="category_icon">Paglalarawan ng icon ng kategorya</string>
+    <string name="channel_name">Mga Anunsyo</string>
+    <string name="channel_description">Mga Anunsyo mula sa Firebase</string>
+
+    <!-- Login strings -->
+    <string name="login_title">MAG-LOG IN</string>
+    <string name="login_to_continue">Mag-login para magpatuloy</string>
+    <string name="phone_number_hint">Numero</string>
+    <string name="password_hint">Password</string>
+    <string name="forgot_password">Nakalimutan ang Password</string>
+    <string name="login_button">Mag-login</string>
+    <string name="register_prompt">Walang account? Mag-register.</string>
+    <string name="phone_number_error">Ang numero ng telepono ay dapat magsimula sa +63 at 13 digit ang haba</string>
+    <string name="password_required">Mangyaring ilagay ang iyong password</string>
+    <string name="logging_in">Nagla-log in...</string>
+
+    <!-- Arrays -->
+    <string-array name="languages">
+        <item>English</item>
+        <item>Tagalog</item>
+    </string-array>
+
+    <string-array name="farming_activities">
+        <item>Pumili ng Pananim</item>
+        <item>Palay</item>
+        <item>Mais</item>
+        <item>Ampalaya</item>
+    </string-array>
+
+    <string-array name="fertilizer_types">
+        <item>Pumili ng Pataba</item>
+        <item>14-14-14</item>
+        <item>Lannate</item>
+        <item>16-20-0</item>
+        <item>Prodan</item>
+    </string-array>
+</resources> 

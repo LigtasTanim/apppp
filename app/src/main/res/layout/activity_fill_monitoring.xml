@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/bgimg"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/menu_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="end"
+            android:layout_marginTop="20sp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="50dp"
+            android:src="@drawable/ic_more_vert_" />
+
+
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+
+            android:layout_alignParentStart="true"
+
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="100dp"
+            android:background="@drawable/fillbg"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="If you have a ongoing crop monitoring, click the 'Continue' button"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/continuebtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/button"
+                android:padding="10dp"
+                android:text="Continue"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Select your crop"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/spinnerFarmingActivity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/fill"
+                android:entries="@array/farming_activities"
+                android:padding="10dp" />
+
+            <Spinner
+                android:id="@+id/spinnerVariety"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:padding="10dp"
+                android:background="@drawable/fill"/>
+
+            <TextView
+                android:id="@+id/tvFertilizerRecommendation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Fertilizer Recommendation"
+                android:textSize="16sp"
+                android:visibility="gone"
+                android:padding="8dp" />
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Set the date of planting (MM-DD-YYYY)"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/startDate"
+                android:layout_width="170sp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/fill"
+                android:hint="MM-DD-YYYY"
+                android:focusable="false"
+                android:clickable="true"
+                android:padding="10dp" />
+
+            <TextView
+                android:id="@+id/tv4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Enter the date of first watering (MM-DD-YYYY)"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/wateringDate"
+                android:layout_width="170sp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/fill"
+                android:hint="MM-DD-YYYY"
+                android:focusable="false"
+                android:clickable="true"
+                android:padding="10dp"
+                android:textColor="@color/black" />
+
+
+            <TextView
+                android:id="@+id/tv5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="How many days before your next watering?"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/intervalDays"
+                android:layout_width="100sp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/fill"
+                android:inputType="date"
+                android:padding="10dp"
+                android:text=""
+                android:textColor="@color/black" />
+
+            <Button
+                android:id="@+id/btnStartMonitoring"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="100dp"
+                android:background="@drawable/button"
+                android:clickable="true"
+                android:padding="10dp"
+                android:text="Start Monitoring"
+                android:textColor="@color/white" />
+
+            
+
+        </LinearLayout>
+    </RelativeLayout>
+</ScrollView>

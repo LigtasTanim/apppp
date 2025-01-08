@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="navigationBar" type="id" />
+    <item name="homeIcon" type="id" />
+    <item name="profileIcon" type="id" />
+    <item name="consultDaText" type="id" />
+    <item name="textViewMiddleName" type="id" />
+    <item name="editTextDateOfBirth" type="id" />
+    <item name="textViewDateOfBirth" type="id" />
+    <item name="radioGroupSex" type="id" />
+    <item name="textViewSex" type="id" />
+    <item name="editTextExtensionName" type="id" />
+    <item name="textViewExtensionName" type="id" />
+    <item name="editTextMiddleName" type="id" />
+    <item name="radioMale" type="id" />
+    <item name="radioFemale" type="id" />
+    <item name="textViewPlaceOfBirth" type="id" />
+    <item name="editTextPlaceOfBirth" type="id" />
+    <item name="textViewPWD" type="id" />
+    <item name="radioGroupPWD" type="id" />
+    <item name="radioYes" type="id" />
+    <item name="radioNo" type="id" />
+    <item name="textViewReligion" type="id" />
+    <item name="editTextReligion" type="id" />
+    <item name="textViewCivilStatus" type="id" />
+    <item name="editTextCivilStatus" type="id" />
+    <item name="textViewFarmingActivity" type="id" />
+    <item name="editTextFarmingActivity" type="id" />
+    <item name="linearLayoutName" type="id" />
+    <item name="linearLayoutSex" type="id" />
+    <item name="sexIcon" type="id" />
+    <item name="linearLayoutMiddleName" type="id" />
+    <item name="middleNameIcon" type="id" />
+    <item name="editTextIsPWD" type="id" />
+    <item name="editTextPhoneNumber" type="id" />
+    <item name="spinnerAssociation" type="id" />
+    <item name="wateringDatesTextView" type="id" />
+    <item name="pestControlDateTextView" type="id" />
+    <item name="harvestDateTextView" type="id" />
+</resources>

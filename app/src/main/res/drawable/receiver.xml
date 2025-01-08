@@ -1,0 +1,5 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#347B5D" /> <!-- Background color for receiver message -->
+    <corners android:radius="8dp" />
+</shape>
