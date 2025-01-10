@@ -40,25 +40,76 @@
 
             android:orientation="horizontal"/>
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    <CalendarView
-        android:id="@+id/wateringScheduleCalendar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+            <!-- CalendarView for Watering Schedule -->
+            <TextView
+                android:id="@+id/calendarLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Watering Schedule"
+                android:textColor="#2E7D32"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif-medium" />
 
-    <TextView
-        android:id="@+id/statusTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:textSize="16sp"
-        android:background="@android:color/holo_blue_light"
-        android:visibility="gone" /> <!-- Initially hidden -->
-</LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <ImageButton
+                    android:id="@+id/previousMonth"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@android:drawable/ic_media_previous"
+                    android:background="?attr/selectableItemBackground"/>
+
+                <TextView
+                    android:id="@+id/monthYearTV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="January 2024"
+                    android:textSize="18sp"
+                    android:gravity="center"/>
+
+                <ImageButton
+                    android:id="@+id/nextMonth"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@android:drawable/ic_media_next"
+                    android:background="?attr/selectableItemBackground"/>
+            </LinearLayout>
+
+            <GridView
+                android:id="@+id/calendarGrid"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:numColumns="7"
+                android:stretchMode="columnWidth"
+                android:horizontalSpacing="2dp"
+                android:verticalSpacing="2dp"
+                android:padding="8dp" />
+
+            <!-- Status TextView -->
+            <TextView
+                android:id="@+id/statusTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:background="@drawable/category"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif"
+                android:textColor="@color/black"
+                android:visibility="gone" />
+        </LinearLayout>
+
 
 
         <LinearLayout
@@ -100,6 +151,17 @@
                 android:textColor="@color/black"
                 android:textSize="20sp" />
 
+            <TextView
+                android:id="@+id/newPendingDateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text=""
+                android:textColor="#008EFF"
+                android:textStyle="italic"
+                android:visibility="gone"
+                android:textSize="16sp" />
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -125,34 +187,54 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/newPestControlDateTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:text="Set New Pest Control Date:"
-                android:textColor="@color/black"
-                android:textSize="20sp" />
-
-            <DatePicker
-                android:id="@+id/newPestControlDatePicker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" />
-
             <Button
-                android:id="@+id/setNewPestControlDateButton"
+                android:id="@+id/showDatePickerButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/button"
-                android:text="Set New Date"
+                android:text="Change Pest Control Date"
                 android:elevation="8dp"
                 android:translationZ="8dp"
                 android:padding="10dp"
                 android:textColor="@color/white"
-                android:clickable="true"
-                android:layout_margin="20dp"
-                android:layout_marginStart="20dp" />
+                android:layout_margin="20dp"/>
+
+            <LinearLayout
+                android:id="@+id/datePickerContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/newPestControlDateTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="Set New Pest Control Date:"
+                    android:textColor="@color/black"
+                    android:textSize="20sp" />
+
+                <DatePicker
+                    android:id="@+id/newPestControlDatePicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp" />
+
+                <Button
+                    android:id="@+id/setNewPestControlDateButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button"
+                    android:text="Set New Date"
+                    android:elevation="8dp"
+                    android:translationZ="8dp"
+                    android:padding="10dp"
+                    android:textColor="@color/white"
+                    android:clickable="true"
+                    android:layout_margin="20dp"
+                    android:layout_marginStart="20dp" />
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"

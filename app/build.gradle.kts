@@ -59,12 +59,10 @@ dependencies {
 
     implementation ("com.github.bumptech.glide:glide:4.15.1")
     implementation("androidx.activity:activity:1.9.3")
-    implementation("org.tensorflow:tensorflow-lite-support:0.1.0")
-    implementation("org.tensorflow:tensorflow-lite-metadata:0.1.0")
     implementation("androidx.datastore:datastore-core-android:1.1.1")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
 
-    implementation("org.tensorflow:tensorflow-lite-support:0.1.0")
+    implementation("org.tensorflow:tensorflow-lite-support:0.4.0")
     implementation("org.tensorflow:tensorflow-lite-metadata:0.4.0")
 
 

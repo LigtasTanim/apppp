@@ -21,6 +21,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.DatePicker;
 import android.widget.CalendarView;
+import android.widget.GridView;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,6 +45,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.text.ParseException;
+import java.util.Date;
 
 public class OngoingMonitoringActivity extends AppCompatActivity {
 
@@ -58,6 +63,12 @@ public class OngoingMonitoringActivity extends AppCompatActivity {
     private String uid;
 
     private CalendarView wateringScheduleCalendar;
+    private GridView calendarGrid;
+    private CustomCalendarAdapter calendarAdapter;
+
+    private ImageButton previousMonth, nextMonth;
+    private TextView monthYearTV;
+    private TextView newPendingDateTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +87,7 @@ public class OngoingMonitoringActivity extends AppCompatActivity {
         wateringDatesRecyclerView = findViewById(R.id.wateringDatesRecyclerView);
         harvestStatusTextView = findViewById(R.id.harvestStatusTextView);
         pestStatusTextView = findViewById(R.id.pestStatusTextView);
+        newPendingDateTextView = findViewById(R.id.newPendingDateTextView);
         wateringDatesList = new ArrayList<>();
 
         databaseReference = FirebaseDatabase.getInstance().getReference("CropsMonitoring");
@@ -83,10 +95,14 @@ public class OngoingMonitoringActivity extends AppCompatActivity {
         uid = getIntent().getStringExtra("uniqueIdentifier");
         phoneNumber = getIntent().getStringExtra("phoneNumber");
         selectedFarmingActivity = getIntent().getStringExtra("FarmingActivity");
+        boolean isRescheduling = getIntent().getBooleanExtra("isRescheduling", false);
+        int wateringDatePosition = getIntent().getIntExtra("wateringDatePosition", -1);
+        String currentDate = getIntent().getStringExtra("currentDate");
 
         Log.d("OngoingMonitoringActivity", "UID: " + uid);
         Log.d("OngoingMonitoringActivity", "Phone Number: " + phoneNumber);
         Log.d("OngoingMonitoringActivity", "Farming Activity: " + selectedFarmingActivity);
+        Log.d("OngoingMonitoringActivity", "Is Rescheduling: " + isRescheduling);
 
         wateringDatesAdapter = new WateringDatesAdapter(this, wateringDatesList, databaseReference, uid, phoneNumber, selectedFarmingActivity);
         wateringDatesRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -125,10 +141,76 @@ public class OngoingMonitoringActivity extends AppCompatActivity {
             calendar.set(year, month, day);
             String newPestControlDate = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault()).format(calendar.getTime());
 
+            newPendingDateTextView.setVisibility(View.VISIBLE);
+            newPendingDateTextView.setText("New Date (Pending): " + newPestControlDate);
+
             updatePestControlDate(newPestControlDate);
         });
 
-        wateringScheduleCalendar = findViewById(R.id.wateringScheduleCalendar);
+        calendarGrid = findViewById(R.id.calendarGrid);
+
+        Button showDatePickerButton = findViewById(R.id.showDatePickerButton);
+        LinearLayout datePickerContainer = findViewById(R.id.datePickerContainer);
+
+        showDatePickerButton.setOnClickListener(v -> {
+            // Toggle visibility
+            if (datePickerContainer.getVisibility() == View.VISIBLE) {
+                datePickerContainer.setVisibility(View.GONE);
+                showDatePickerButton.setText("Change Pest Control Date");
+            } else {
+                datePickerContainer.setVisibility(View.VISIBLE);
+                showDatePickerButton.setText("Hide Date Picker");
+            }
+        });
+
+        Button statusUpdatePest = findViewById(R.id.statusUpdatePest);
+        Button statusUpdateHarvest = findViewById(R.id.statusUpdateHarvest);
+
+        // Click listener for Pest Control status update
+        statusUpdatePest.setOnClickListener(v -> {
+            Map<String, Object> updates = new HashMap<>();
+            updates.put("pestControlDate/status", "completed");
+
+            databaseReference.child(selectedFarmingActivity).child(uid)
+                .child(phoneNumber)
+                .updateChildren(updates)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        pestStatusTextView.setText("completed");
+                        pestStatusTextView.setTextColor(Color.GREEN);
+                        Toast.makeText(OngoingMonitoringActivity.this, 
+                            "Pest Control status updated to completed", 
+                            Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(OngoingMonitoringActivity.this, 
+                            "Failed to update status", 
+                            Toast.LENGTH_SHORT).show();
+                    }
+                });
+        });
+
+        // Click listener for Harvest status update
+        statusUpdateHarvest.setOnClickListener(v -> {
+            Map<String, Object> updates = new HashMap<>();
+            updates.put("harvestDate/status", "completed");
+
+            databaseReference.child(selectedFarmingActivity).child(uid)
+                .child(phoneNumber)
+                .updateChildren(updates)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        harvestStatusTextView.setText("completed");
+                        harvestStatusTextView.setTextColor(Color.GREEN);
+                        Toast.makeText(OngoingMonitoringActivity.this, 
+                            "Harvest status updated to completed", 
+                            Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(OngoingMonitoringActivity.this, 
+                            "Failed to update status", 
+                            Toast.LENGTH_SHORT).show();
+                    }
+                });
+        });
 
         if (phoneNumber != null && selectedFarmingActivity != null && uid != null) {
             setCurrentDate();
@@ -137,7 +219,33 @@ public class OngoingMonitoringActivity extends AppCompatActivity {
             Toast.makeText(this, "Phone number or crop node not found", Toast.LENGTH_SHORT).show();
         }
 
-        setupWateringScheduleCalendar();
+        setupCalendar();
+
+        // If we're rescheduling, update the UI to reflect that
+        if (isRescheduling) {
+            TextView calendarLabel = findViewById(R.id.calendarLabel);
+            calendarLabel.setText("Select New Watering Date");
+            
+            // Modify calendar click listener for rescheduling
+            calendarGrid.setOnItemClickListener((parent, view, position, id) -> {
+                if (position < 7) return;
+                
+                position -= 7;
+                Calendar cal = (Calendar) calendarAdapter.getCalendar().clone();
+                cal.set(Calendar.DAY_OF_MONTH, 1);
+                int firstDayOfMonth = cal.get(Calendar.DAY_OF_WEEK) - 1;
+                cal.add(Calendar.DAY_OF_MONTH, position - firstDayOfMonth);
+
+                String selectedDate = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault()).format(cal.getTime());
+                
+                // Update the watering date
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("newDate", selectedDate);
+                resultIntent.putExtra("position", wateringDatePosition);
+                setResult(RESULT_OK, resultIntent);
+                finish();
+            });
+        }
     }
 
     @Override
@@ -197,6 +305,51 @@ public class OngoingMonitoringActivity extends AppCompatActivity {
 
                             phoneSnapshot.getRef().updateChildren(updates);
 
+                            DataSnapshot pestControlSnapshot = phoneSnapshot.child("pestControlDate");
+                            String originalSchedule = pestControlSnapshot.child("originalSchedule").getValue(String.class);
+                            String reschedule = pestControlSnapshot.child("reschedule").getValue(String.class);
+                            String pestStatus = pestControlSnapshot.child("status").getValue(String.class);
+                            
+                            // Update pest control status
+                            if (pestStatus != null) {
+                                pestStatusTextView.setText(pestStatus);
+                                // Set color based on status
+                                if (pestStatus.equals("completed")) {
+                                    pestStatusTextView.setTextColor(Color.GREEN);
+                                } else {
+                                    pestStatusTextView.setTextColor(Color.RED);
+                                }
+                            } else {
+                                pestStatusTextView.setText("ongoing");
+                                pestStatusTextView.setTextColor(Color.RED);
+                            }
+
+                            if (originalSchedule != null) {
+                                pestControlDateTextView.setText(originalSchedule);
+                            }
+                            
+                            if (reschedule != null) {
+                                newPendingDateTextView.setVisibility(View.VISIBLE);
+                                newPendingDateTextView.setText("Rescheduled to: " + reschedule);
+                            } else {
+                                newPendingDateTextView.setVisibility(View.GONE);
+                            }
+
+                            // Get and update harvest status
+                            String harvestStatus = phoneSnapshot.child("harvestDate").child("status").getValue(String.class);
+                            if (harvestStatus != null) {
+                                harvestStatusTextView.setText(harvestStatus);
+                                // Set color based on status
+                                if (harvestStatus.equals("completed")) {
+                                    harvestStatusTextView.setTextColor(Color.GREEN);
+                                } else {
+                                    harvestStatusTextView.setTextColor(Color.RED);
+                                }
+                            } else {
+                                harvestStatusTextView.setText("ongoing");
+                                harvestStatusTextView.setTextColor(Color.RED);
+                            }
+
                         } catch (Exception e) {
                             Toast.makeText(OngoingMonitoringActivity.this, "Error parsing dates", Toast.LENGTH_SHORT).show();
                         }
@@ -226,31 +379,142 @@ public class OngoingMonitoringActivity extends AppCompatActivity {
     }
 
     private void updatePestControlDate(String newPestControlDate) {
+        // Create a map to update multiple values
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("pestControlDate/originalSchedule", pestControlDateTextView.getText().toString());
+        updates.put("pestControlDate/reschedule", newPestControlDate);
+        updates.put("pestControlDate/status", "rescheduled");
+
         databaseReference.child(selectedFarmingActivity).child(uid)
-            .child(phoneNumber).child("pestControlDate").setValue(newPestControlDate)
+            .child(phoneNumber)
+            .updateChildren(updates)
             .addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    Toast.makeText(OngoingMonitoringActivity.this, "Pest control date updated to: " + newPestControlDate, Toast.LENGTH_SHORT).show();
-                    pestControlDateTextView.setText(newPestControlDate); // Update UI
+                    Toast.makeText(OngoingMonitoringActivity.this, "Pest control date rescheduled", Toast.LENGTH_SHORT).show();
+                    newPendingDateTextView.setVisibility(View.VISIBLE);
+                    newPendingDateTextView.setText("Rescheduled to: " + newPestControlDate);
                 } else {
-                    Toast.makeText(OngoingMonitoringActivity.this, "Failed to update pest control date", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OngoingMonitoringActivity.this, "Failed to reschedule pest control date", Toast.LENGTH_SHORT).show();
                 }
             });
     }
 
-    private void setupWateringScheduleCalendar() {
-        wateringScheduleCalendar.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
-            String selectedDate = String.format(Locale.getDefault(), "%02d-%02d-%d", month + 1, dayOfMonth, year);
-            for (WateringDate wateringDate : wateringDatesList) {
-                if (wateringDate.getDate().equals(selectedDate)) {
-                    Toast.makeText(this, "Watering Status: " + wateringDate.getStatus(), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            }
-            Toast.makeText(this, "No watering scheduled for this date", Toast.LENGTH_SHORT).show();
+    private void setupCalendar() {
+        calendarGrid = findViewById(R.id.calendarGrid);
+        previousMonth = findViewById(R.id.previousMonth);
+        nextMonth = findViewById(R.id.nextMonth);
+        monthYearTV = findViewById(R.id.monthYearTV);
+
+        calendarAdapter = new CustomCalendarAdapter(this, wateringDatesList);
+        calendarGrid.setAdapter(calendarAdapter);
+        
+        // Update month year display
+        updateMonthYear();
+
+        // Setup month navigation
+        previousMonth.setOnClickListener(v -> {
+            calendarAdapter.previousMonth();
+            updateMonthYear();
         });
 
-        for (WateringDate wateringDate : wateringDatesList) {
+        nextMonth.setOnClickListener(v -> {
+            calendarAdapter.nextMonth();
+            updateMonthYear();
+        });
+
+        calendarGrid.setOnItemClickListener((parent, view, position, id) -> {
+            // Skip if clicking on week day labels
+            if (position < 7) return;
+
+            // Adjust position to account for week day labels
+            position -= 7;
+
+            Calendar cal = (Calendar) calendarAdapter.getCalendar().clone();
+            cal.set(Calendar.DAY_OF_MONTH, 1);
+            int firstDayOfMonth = cal.get(Calendar.DAY_OF_WEEK) - 1;
+            cal.add(Calendar.DAY_OF_MONTH, position - firstDayOfMonth);
+
+            String selectedDate = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault()).format(cal.getTime());
+            
+            // Find if this date is already a watering date
+            int wateringDateIndex = -1;
+            for (int i = 0; i < wateringDatesList.size(); i++) {
+                if (wateringDatesList.get(i).getDate().equals(selectedDate)) {
+                    wateringDateIndex = i;
+                    break;
+                }
+            }
+
+            // If it's an existing watering date
+            if (wateringDateIndex != -1) {
+                WateringDate wateringDate = wateringDatesList.get(wateringDateIndex);
+                updateWateringDateInDatabase(wateringDateIndex, selectedDate, wateringDate.getStatus());
+            } else {
+                // Add new watering date
+                addNewWateringDate(selectedDate);
+            }
+        });
+    }
+
+    private void updateMonthYear() {
+        monthYearTV.setText(calendarAdapter.getMonthYear());
+    }
+
+    private void updateWateringDateInDatabase(int index, String date, String currentStatus) {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("wateringDates/" + index + "/date", date);
+        updates.put("wateringDates/" + index + "/status", "ongoing");
+
+        databaseReference.child(selectedFarmingActivity)
+            .child(uid)
+            .child(phoneNumber)
+            .updateChildren(updates)
+            .addOnSuccessListener(aVoid -> {
+                Toast.makeText(this, "Watering date updated", Toast.LENGTH_SHORT).show();
+                wateringDatesList.get(index).date = date;
+                wateringDatesAdapter.notifyDataSetChanged();
+                calendarAdapter.notifyDataSetChanged();
+            })
+            .addOnFailureListener(e -> 
+                Toast.makeText(this, "Failed to update watering date", Toast.LENGTH_SHORT).show()
+            );
+    }
+
+    private void addNewWateringDate(String date) {
+        int newIndex = wateringDatesList.size();
+        if (newIndex >= 6) {
+            Toast.makeText(this, "Maximum number of watering dates reached", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("wateringDates/" + newIndex + "/date", date);
+        updates.put("wateringDates/" + newIndex + "/status", "ongoing");
+
+        databaseReference.child(selectedFarmingActivity)
+            .child(uid)
+            .child(phoneNumber)
+            .updateChildren(updates)
+            .addOnSuccessListener(aVoid -> {
+                wateringDatesList.add(new WateringDate(date, "ongoing"));
+                wateringDatesAdapter.notifyDataSetChanged();
+                calendarAdapter.notifyDataSetChanged();
+                Toast.makeText(this, "New watering date added", Toast.LENGTH_SHORT).show();
+            })
+            .addOnFailureListener(e -> 
+                Toast.makeText(this, "Failed to add watering date", Toast.LENGTH_SHORT).show()
+            );
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1001 && resultCode == RESULT_OK && data != null) {
+            String newDate = data.getStringExtra("newDate");
+            int position = data.getIntExtra("position", -1);
+            if (position != -1 && wateringDatesAdapter != null) {
+                wateringDatesAdapter.updateRescheduledDate(position, newDate);
+            }
         }
     }
 }

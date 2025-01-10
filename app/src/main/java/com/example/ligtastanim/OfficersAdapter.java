@@ -1,5 +1,7 @@
 package com.example.ligtastanim;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +52,16 @@ public class OfficersAdapter extends RecyclerView.Adapter<OfficersAdapter.Office
             nameText = itemView.findViewById(R.id.officerName);
             positionText = itemView.findViewById(R.id.officerPosition);
             phoneText = itemView.findViewById(R.id.officerPhone);
+
+            // Add click listener to phone number
+            phoneText.setOnClickListener(v -> {
+                String phoneNumber = phoneText.getText().toString();
+                if (!phoneNumber.isEmpty()) {
+                    Intent dialIntent = new Intent(Intent.ACTION_DIAL);
+                    dialIntent.setData(Uri.parse("tel:" + phoneNumber));
+                    v.getContext().startActivity(dialIntent);
+                }
+            });
         }
     }
 } 
